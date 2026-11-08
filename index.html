@@ -354,8 +354,8 @@ $("merci").onchange=function(){if(!this.checked)$("gate").classList.add("on")};
 var SUPA_URL="https://xpkhmbzlgtlofwzlavtd.supabase.co";      /* ex : https://abcdefgh.supabase.co */
 var SUPA_KEY="sb_publishable_K547wN1RfGUmzkpa-xHwrw_4KpEpzXX";       /* clé publique : « anon » ou « publishable » */
 var ON=SUPA_URL.indexOf("https://")===0,ME="",saving=false;
-var H={"apikey":SUPA_KEY,"Content-Type":"application/json"};
-if(SUPA_KEY.indexOf("sb_")!==0)H.Authorization="Bearer "+SUPA_KEY;
+var SH={"apikey":SUPA_KEY,"Content-Type":"application/json"};
+if(SUPA_KEY.indexOf("sb_")!==0)SH.Authorization="Bearer "+SUPA_KEY;
 function lbMsg(m){$("lbMsg").textContent=m;$("lbMsg").style.display=m?"block":"none"}
 function renderLb(rows){
 var ol=$("lb");ol.textContent="";
@@ -370,7 +370,7 @@ ol.appendChild(li);
 });
 }
 function charger(){
-fetch(SUPA_URL+"/rest/v1/classement?select=pseudo,score&order=score.desc,updated_at.asc&limit=300",{headers:H})
+fetch(SUPA_URL+"/rest/v1/classement?select=pseudo,score&order=score.desc,updated_at.asc&limit=300",{headers:SH,cache:"no-store"})
 .then(function(r){if(!r.ok)throw 0;return r.json()}).then(renderLb)
 .catch(function(){lbMsg("Classement indisponible pour le moment.")});
 }
@@ -380,7 +380,7 @@ if(!ps){sm.textContent="Pas de pseudo, pas de classement : ce test n’est pas c
 if(!ON){sm.textContent="Le classement n’est pas encore branché.";return}
 if(saving)return;saving=true;sm.textContent="Enregistrement…";
 fetch(SUPA_URL+"/rest/v1/classement?on_conflict=pseudo",{method:"POST",
-headers:Object.assign({"Prefer":"resolution=merge-duplicates,return=minimal"},H),
+headers:Object.assign({"Prefer":"resolution=merge-duplicates,return=minimal"},SH),
 body:JSON.stringify({pseudo:ps,score:n,updated_at:new Date().toISOString()})})
 .then(function(r){if(!r.ok)throw 0;ME=ps;sm.textContent="✅ "+ps+" est au classement général.";charger()})
 .catch(function(){sm.textContent="Score non enregistré, réessaie dans un instant."})
